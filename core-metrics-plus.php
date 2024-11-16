@@ -2,7 +2,7 @@
 /*
 Plugin Name: Core Metrics Plus
 Description: Optimize your WordPress site's Core Web Vitals through smart resource loading and performance enhancements.
-Version: 1.1.1
+Version: 1.1.2
 Author: Carmelyne
 Plugin URI: https://github.com/carmelyne/core-metrics-plus
 */
@@ -27,18 +27,24 @@ function add_fetch_priority() {
     ?>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            // Get all images and videos
-            let images = document.querySelectorAll('img');
-            let videos = document.querySelectorAll('video');
+            try {
+                // Get all images and videos
+                let images = document.querySelectorAll('img');
+                let videos = document.querySelectorAll('video');
 
-            // Set high priority for first 3 images
-            for (let i = 0; i < images.length && i < 3; i++) {
-                images[i].setAttribute('fetchpriority', 'high');
-            }
+                // Set high priority for first 3 images
+                for (let i = 0; i < images.length && i < 3; i++) {
+                    if (images[i]) {
+                        images[i].setAttribute('fetchpriority', 'high');
+                    }
+                }
 
-            // Set high priority for first video
-            if (videos.length > 0) {
-                videos[0].setAttribute('fetchpriority', 'high');
+                // Set high priority for first video
+                if (videos.length > 0 && videos[0]) {
+                    videos[0].setAttribute('fetchpriority', 'high');
+                }
+            } catch (error) {
+                console.warn('Core Metrics Plus: Error setting fetch priorities:', error);
             }
         });
     </script>

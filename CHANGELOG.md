@@ -4,6 +4,12 @@ All notable changes to Core Metrics Plus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2024-01-09
+### Enhanced
+- Added error handling to fetch priority functionality
+- Improved null checks for DOM elements
+- Added warning messages for debugging
+
 ## [1.1.1] - 2024-01-09
 - Added more detailed debug information for update checker
 - Improved update notification reliability
