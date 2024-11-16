@@ -1,62 +1,79 @@
 <?php
-/*
-Plugin Name: Core Metrics Plus
-Description: Optimize your WordPress site's Core Web Vitals through smart resource loading and performance enhancements.
-Version: 1.1.3
-Author: Carmelyne
-Plugin URI: https://github.com/carmelyne/core-metrics-plus
-*/
+/**
+ * Plugin Name: Core Metrics Plus
+ * Plugin URI: https://github.com/carmelyne/core-metrics-plus
+ * Description: Optimize Core Web Vitals through smart resource loading and performance enhancements
+ * Version: 1.1.4
+ * Author: Carmelyne
+ * Author URI: https://github.com/carmelyne
+ * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: core-metrics-plus
+ * Domain Path: /languages
+ *
+ * @package CoreMetricsPlus
+ */
 
-if (file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php')) {
-    require_once dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php';
-    $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-        'https://github.com/carmelyne/core-metrics-plus',
-        __FILE__,
-        'core-metrics-plus'
-    );
-    
-    // Configure to use GitHub releases
-    $myUpdateChecker->getVcsApi()->enableReleaseAssets();
-    
-    // Enable WordPress to download from GitHub releases
-    // Add your GitHub token here if your repository is private
-    // $myUpdateChecker->setAuthentication('your-github-token');
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
 }
 
+// Plugin version
+define('CMP_VERSION', '1.1.4');
+
+// Plugin path
+define('CMP_PATH', plugin_dir_path(__FILE__));
+
+// Plugin URL
+define('CMP_URL', plugin_dir_url(__FILE__));
+
+// Require the update checker
+require_once plugin_dir_path(__DIR__) . 'plugin-update-checker/plugin-update-checker.php';
+
+// Initialize update checker
+$myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+    'https://github.com/carmelyne/core-metrics-plus',
+    __FILE__,
+    'core-metrics-plus'
+);
+
+// Configure to use GitHub releases
+$myUpdateChecker->getVcsApi()->enableReleaseAssets();
+
+// Include core features
+require_once CMP_PATH . 'critical-css.php';
+
+/**
+ * Add fetch priority to images and videos
+ */
 function add_fetch_priority() {
-    ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            try {
-                console.time('CMP: Fetch Priority Setup');
-                // Get all images and videos
-                let images = document.querySelectorAll('img');
-                let videos = document.querySelectorAll('video');
-
-                // Set high priority for first 3 images
-                for (let i = 0; i < images.length && i < 3; i++) {
-                    if (images[i]) {
-                        images[i].setAttribute('fetchpriority', 'high');
-                    }
-                }
-
-                // Set high priority for first video
-                if (videos.length > 0 && videos[0]) {
-                    videos[0].setAttribute('fetchpriority', 'high');
-                }
+    try {
+        console.time('fetchPriorityOptimization');
+        
+        $script = "
+            document.addEventListener('DOMContentLoaded', function() {
+                const elements = document.querySelectorAll('img, video');
+                let optimized = 0;
                 
-                console.timeEnd('CMP: Fetch Priority Setup');
-                console.info('CMP: Optimized', Math.min(3, images.length), 'images and', Math.min(1, videos.length), 'videos');
-            } catch (error) {
-                console.warn('Core Metrics Plus: Error setting fetch priorities:', error);
-            }
-        });
-    </script>
-    <?php
+                elements.forEach(function(el) {
+                    if (el.getBoundingClientRect().top < window.innerHeight) {
+                        el.fetchPriority = 'high';
+                        optimized++;
+                    }
+                });
+                
+                console.info('Core Metrics Plus: Optimized ' + optimized + ' resources with fetch priority');
+            });
+        ";
+        
+        wp_add_inline_script('jquery', $script);
+        console.timeEnd('fetchPriorityOptimization');
+        
+    } catch (Exception $e) {
+        error_log('Core Metrics Plus - Fetch Priority Error: ' . $e->getMessage());
+    }
 }
-
-// Hook into WordPress footer
-add_action('wp_footer', 'add_fetch_priority');
+add_action('wp_enqueue_scripts', 'add_fetch_priority');
 
 /**
  * Add defer attribute to non-essential scripts

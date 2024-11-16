@@ -4,6 +4,20 @@ All notable changes to Core Metrics Plus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2024-01-09
+### Added
+- Critical CSS extraction and inline injection
+- Automatic above-the-fold CSS detection
+- Smart CSS loading prioritization
+- CSS minification and caching
+- Deferred loading of non-critical styles
+
+### Changed
+- Improved fetch priority implementation
+- Enhanced error handling and logging
+- Reorganized repository structure
+- Updated documentation
+
 ## [1.1.3] - 2024-01-09
 ### Added
 - Performance logging for fetch priority operations
