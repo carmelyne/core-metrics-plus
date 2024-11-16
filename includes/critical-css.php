@@ -13,6 +13,15 @@ class CMP_Critical_CSS {
     private static $instance = null;
     private $cache_key_prefix = 'cmp_critical_css_';
     private $cache_duration = 86400; // 24 hours
+    private $excluded_handles = array(
+        'admin-bar',
+        'dashicons',
+        'wp-admin',
+        'login',
+        'customize-preview',
+        'wp-custom-admin',
+        'wp-includes'
+    );
 
     public static function init() {
         if (null === self::$instance) {
@@ -22,8 +31,11 @@ class CMP_Critical_CSS {
     }
 
     private function __construct() {
-        add_action('wp_head', array($this, 'inject_critical_css'), 1);
-        add_action('wp_enqueue_scripts', array($this, 'defer_styles'), 999);
+        // Only run on frontend
+        if (!is_admin() && !is_customize_preview()) {
+            add_action('wp_head', array($this, 'inject_critical_css'), 1);
+            add_action('wp_enqueue_scripts', array($this, 'defer_styles'), 999);
+        }
     }
 
     public function inject_critical_css() {
@@ -34,7 +46,13 @@ class CMP_Critical_CSS {
 
         $critical_css = '';
         foreach ($wp_styles->queue as $handle) {
+            // Skip if style is not registered
             if (!isset($wp_styles->registered[$handle])) {
+                continue;
+            }
+
+            // Skip admin-related styles
+            if ($this->is_admin_style($handle)) {
                 continue;
             }
 
@@ -60,8 +78,9 @@ class CMP_Critical_CSS {
             if (!is_wp_error($response)) {
                 $css = wp_remote_retrieve_body($response);
                 if (!empty($css)) {
-                    $critical_css .= $this->process_css($css, $handle);
-                    set_transient($cache_key, $critical_css, $this->cache_duration);
+                    $processed_css = $this->process_css($css, $handle);
+                    $critical_css .= $processed_css;
+                    set_transient($cache_key, $processed_css, $this->cache_duration);
                 }
             }
         }
@@ -72,6 +91,28 @@ class CMP_Critical_CSS {
                 wp_strip_all_tags($critical_css)
             );
         }
+    }
+
+    private function is_admin_style($handle) {
+        // Check against excluded handles
+        foreach ($this->excluded_handles as $excluded) {
+            if (strpos($handle, $excluded) !== false) {
+                return true;
+            }
+        }
+
+        // Check if style src contains admin paths
+        $style = $wp_styles->registered[$handle];
+        if ($style->src) {
+            $admin_paths = array('/wp-admin/', '/wp-includes/css/admin-', '/wp-includes/css/customize-');
+            foreach ($admin_paths as $path) {
+                if (strpos($style->src, $path) !== false) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private function process_css($css, $handle) {
@@ -90,7 +131,13 @@ class CMP_Critical_CSS {
         }
 
         foreach ($wp_styles->queue as $handle) {
+            // Skip if style is not registered
             if (!isset($wp_styles->registered[$handle])) {
+                continue;
+            }
+
+            // Skip admin-related styles
+            if ($this->is_admin_style($handle)) {
                 continue;
             }
 

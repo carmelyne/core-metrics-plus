@@ -50,17 +50,29 @@ WHEN updating version:
       - core-metrics-plus.php:CMP_VERSION
       - docs/CHANGELOG.md
     
-    SET versions TO []
-    FOR EACH location IN version_locations:
-      APPEND get_version(location) TO versions
+    # First check current version
+    SET current_version TO get_version_from_file("core-metrics-plus.php")
+    SET new_version TO increment_version(current_version)
     
-    IF NOT all_versions_match(versions):
-      TELL USER "Version mismatch detected"
-      ASK USER "Which version should be used?"
-      SET correct_version TO user_response
-      
-      FOR EACH location IN version_locations:
-        update_version(location, correct_version)
+    # Always confirm version change with user
+    TELL USER "Current version is {current_version}"
+    ASK USER "Confirm update to version {new_version}? This will modify multiple files."
+    
+    IF NOT user_confirms:
+      TELL USER "Version update cancelled"
+      RETURN
+    
+    # Update all version references
+    FOR EACH location IN version_locations:
+      IF file_exists(location):
+        UPDATE_VERSION in location TO new_version
+      ELSE:
+        WARN USER "Could not update version in {location}: file not found"
+    
+    # Create release package
+    CREATE_DIRECTORY "assets" IF NOT EXISTS
+    SET package_name TO "core-metrics-plus-{new_version}.zip"
+    CREATE_RELEASE_PACKAGE "assets/{package_name}"
   CATCH ERROR version_error:
     TELL USER "Version update failed: {version_error}"
 
