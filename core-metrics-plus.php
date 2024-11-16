@@ -41,7 +41,7 @@ $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChe
 $myUpdateChecker->getVcsApi()->enableReleaseAssets();
 
 // Include core features
-require_once CMP_PATH . 'critical-css.php';
+require_once CMP_PATH . 'includes/critical-css.php';
 
 /**
  * Add fetch priority to images and videos
