@@ -1,3 +1,106 @@
+// Core Metrics Plus Development Workflow
+
+// Version Control
+VERSION_CONTROL {
+    BRANCH_NAMING {
+        feature: "feat/*"
+        bugfix: "fix/*"
+        documentation: "docs/*"
+        testing: "test/*"
+        ci: "ci/*"
+    }
+
+    COMMIT_MESSAGES {
+        // Using Conventional Commits
+        feat: "New features"
+        fix: "Bug fixes"
+        docs: "Documentation changes"
+        style: "Code style changes"
+        refactor: "Code refactoring"
+        test: "Test changes"
+        ci: "CI/CD changes"
+        chore: "Other changes"
+    }
+
+    PR_WORKFLOW {
+        CREATE_BRANCH {
+            command: "git checkout -b ${branch_type}/${branch_name}"
+            example: "git checkout -b feat/new-feature"
+        }
+
+        MAKE_CHANGES {
+            commit_format: "${type}: ${description}\n\n${details}"
+            example: "feat: add new optimization feature\n\n- Add feature X\n- Update docs\n- Add tests"
+        }
+
+        CREATE_PR {
+            command: "gh pr create --title '${commit_type}: ${description}' --body '${pr_body}'"
+            template: """
+                ## Changes
+                ${bullet_points}
+
+                ## Testing
+                - [ ] Tests added/updated
+                - [ ] Documentation updated
+                - [ ] No breaking changes
+            """
+        }
+
+        REVIEW_PROCESS {
+            checks: [
+                "GitHub Actions workflow passes",
+                "Code review approved",
+                "Documentation updated"
+            ]
+        }
+    }
+}
+
+// Plugin Version Management
+VERSIONING {
+    format: "MAJOR.MINOR.PATCH"
+    rules: {
+        MAJOR: "Breaking changes"
+        MINOR: "New features (feat:)"
+        PATCH: "Bug fixes (fix:)"
+    }
+}
+
+// Testing Requirements
+TESTING {
+    environments: [
+        "PHP 8.0",
+        "PHP 8.1",
+        "WordPress latest",
+        "WordPress 6.2"
+    ]
+    
+    types: [
+        "Syntax validation",
+        "Basic smoke tests",
+        "File integrity checks"
+    ]
+}
+
+// Documentation Structure
+DOCUMENTATION {
+    required_files: [
+        "README.md",
+        "docs/PERFORMANCE.md",
+        "docs/USER_STORIES.md"
+    ]
+    
+    code_comments: {
+        style: "PHPDoc",
+        required_sections: [
+            "@package",
+            "@since",
+            "@param (if applicable)",
+            "@return (if applicable)"
+        ]
+    }
+}
+
 FUNCTION check_required_files():
   SET required_files TO:
     - docs/AI_ASSIST.md
