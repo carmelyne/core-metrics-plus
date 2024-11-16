@@ -15,7 +15,7 @@
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 // Plugin version
@@ -27,82 +27,80 @@ define('CMP_PATH', plugin_dir_path(__FILE__));
 // Plugin URL
 define('CMP_URL', plugin_dir_url(__FILE__));
 
-// Include critical CSS functionality
-require_once CMP_PATH . 'includes/critical-css.php';
-
-// Require the update checker
-require_once CMP_PATH . 'plugin-update-checker/plugin-update-checker.php';
-
-// Initialize update checker
-$myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-    'https://github.com/carmelyne/core-metrics-plus',
-    __FILE__,
-    'core-metrics-plus'
-);
-
-// Configure to use GitHub releases
-$myUpdateChecker->getVcsApi()->enableReleaseAssets();
-
 /**
  * Add fetch priority to images and videos
  */
-function add_fetch_priority() {
-    try {
-        $script = "
+function cmp_add_fetch_priority() {
+    $script = "
+        document.addEventListener('DOMContentLoaded', function() {
             console.time('fetchPriorityOptimization');
-            document.addEventListener('DOMContentLoaded', function() {
-                const elements = document.querySelectorAll('img, video');
-                let optimized = 0;
-                
-                elements.forEach(function(el) {
-                    if (el.getBoundingClientRect().top < window.innerHeight) {
-                        el.fetchPriority = 'high';
-                        optimized++;
-                    }
-                });
-                
-                console.info('Core Metrics Plus: Optimized ' + optimized + ' resources with fetch priority');
-                console.timeEnd('fetchPriorityOptimization');
+            const elements = document.querySelectorAll('img, video');
+            let optimized = 0;
+            
+            elements.forEach(function(el) {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                    el.fetchPriority = 'high';
+                    optimized++;
+                }
             });
-        ";
-        
-        wp_add_inline_script('jquery', $script);
-    } catch (Exception $e) {
-        error_log('Core Metrics Plus - Fetch Priority Error: ' . $e->getMessage());
-    }
+            
+            console.info('Core Metrics Plus: Optimized ' + optimized + ' resources with fetch priority');
+            console.timeEnd('fetchPriorityOptimization');
+        });
+    ";
+    
+    wp_add_inline_script('jquery', $script);
 }
-add_action('wp_enqueue_scripts', 'add_fetch_priority');
 
 /**
  * Add defer attribute to non-essential scripts
  */
 function cmp_defer_scripts($tag, $handle, $src) {
-    // List of scripts that should not be deferred
-    $no_defer = array(
-        'jquery',              // Core jQuery
-        'jquery-core',         // jQuery core
-        'jquery-migrate'       // jQuery migrate
-    );
-
-    // Don't defer these critical scripts
+    $no_defer = array('jquery', 'jquery-core', 'jquery-migrate');
+    
     if (in_array($handle, $no_defer)) {
         return $tag;
     }
-
-    // Add defer attribute to script tag
+    
     return str_replace(' src', ' defer src', $tag);
 }
-add_filter('script_loader_tag', 'cmp_defer_scripts', 10, 3);
 
 /**
  * Optimize script loading order
  */
 function cmp_optimize_scripts() {
     if (!is_admin()) {
-        // Move jQuery to footer if it's not needed in header
         wp_scripts()->add_data('jquery', 'group', 1);
         wp_scripts()->add_data('jquery-core', 'group', 1);
         wp_scripts()->add_data('jquery-migrate', 'group', 1);
     }
 }
-add_action('wp_enqueue_scripts', 'cmp_optimize_scripts', 99);
+
+/**
+ * Initialize plugin features
+ */
+function cmp_init() {
+    // Script optimization
+    add_action('wp_enqueue_scripts', 'cmp_add_fetch_priority');
+    add_filter('script_loader_tag', 'cmp_defer_scripts', 10, 3);
+    add_action('wp_enqueue_scripts', 'cmp_optimize_scripts', 99);
+    
+    // Load update checker
+    if (file_exists(CMP_PATH . 'plugin-update-checker/plugin-update-checker.php')) {
+        require_once CMP_PATH . 'plugin-update-checker/plugin-update-checker.php';
+        $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+            'https://github.com/carmelyne/core-metrics-plus',
+            __FILE__,
+            'core-metrics-plus'
+        );
+        $myUpdateChecker->getVcsApi()->enableReleaseAssets();
+    }
+    
+    // Load critical CSS feature
+    if (file_exists(CMP_PATH . 'includes/critical-css.php')) {
+        require_once CMP_PATH . 'includes/critical-css.php';
+    }
+}
+
+// Initialize plugin
+add_action('plugins_loaded', 'cmp_init');
