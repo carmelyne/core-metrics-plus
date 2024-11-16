@@ -14,6 +14,22 @@ if (file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checke
         __FILE__,
         'core-metrics-plus'
     );
+    
+    // Enable debug mode
+    $myUpdateChecker->debugMode = true;
+    
+    // Add debugging action
+    add_action('admin_footer', function() use ($myUpdateChecker) {
+        if (current_user_can('manage_options')) {
+            echo '<div style="display:none;"><pre>';
+            echo "Update Checker Debug Info:\n";
+            echo "Last Check: " . get_site_transient('update_plugins') . "\n";
+            echo "Plugin File: " . __FILE__ . "\n";
+            echo "Metadata URL: " . $myUpdateChecker->getMetadataUrl() . "\n";
+            echo "Current Version: " . get_plugin_data(__FILE__)['Version'] . "\n";
+            echo '</pre></div>';
+        }
+    });
 }
 
 function add_fetch_priority() {
