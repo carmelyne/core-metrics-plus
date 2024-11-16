@@ -17,17 +17,27 @@ if (file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checke
     
     // Enable debug mode
     $myUpdateChecker->debugMode = true;
+
+    // Force an update check on every page load (temporary, for debugging)
+    add_action('init', function() use ($myUpdateChecker) {
+        delete_site_transient('update_plugins');
+        delete_site_transient('puc_check_count_core-metrics-plus');
+        $myUpdateChecker->checkForUpdates();
+    });
     
     // Add debugging action
-    add_action('admin_footer', function() use ($myUpdateChecker) {
+    add_action('admin_notices', function() use ($myUpdateChecker) {
         if (current_user_can('manage_options')) {
-            echo '<div style="display:none;"><pre>';
-            echo "Update Checker Debug Info:\n";
-            echo "Last Check: " . get_site_transient('update_plugins') . "\n";
-            echo "Plugin File: " . __FILE__ . "\n";
-            echo "Metadata URL: " . $myUpdateChecker->getMetadataUrl() . "\n";
+            $info = $myUpdateChecker->getUpdateInfo();
+            echo '<div class="notice notice-info">';
+            echo '<p><strong>Core Metrics Plus Debug Info:</strong></p>';
+            echo '<pre>';
             echo "Current Version: " . get_plugin_data(__FILE__)['Version'] . "\n";
-            echo '</pre></div>';
+            echo "Update Checker URL: " . $myUpdateChecker->getMetadataUrl() . "\n";
+            echo "Last Check: " . date('Y-m-d H:i:s', get_site_transient('puc_last_check_core-metrics-plus')) . "\n";
+            echo "Update Info: " . print_r($info, true) . "\n";
+            echo '</pre>';
+            echo '</div>';
         }
     });
 }
