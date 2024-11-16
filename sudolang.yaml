@@ -1,0 +1,311 @@
+# Core Metrics Plus - AI Development Configuration
+# 
+# SUDOLANG VERSION: 1.0.0
+# PURPOSE: AI-assisted development configuration
+# DOCS: https://github.com/paralleldrive/sudolang-llm-support/blob/main/sudolang.sudo.md
+#
+# This file follows the Sudolang specification for LLM support.
+# Sudolang helps Large Language Models (LLMs) understand:
+# 1. Project structure and conventions
+# 2. Development workflows and standards
+# 3. Testing and quality requirements
+# 4. Documentation requirements
+#
+# AI CAPABILITIES REQUIRED:
+# - Code generation
+# - Documentation writing
+# - Testing suggestions
+# - Performance optimization
+# - WordPress best practices
+
+metadata:
+  version: "1.0.0"
+  plugin_name: "Core Metrics Plus"
+  description: "WordPress performance optimization plugin"
+  repository: "https://github.com/carmelyne/core-metrics-plus"
+  ai_compatibility:
+    - "Codeium"
+    - "GitHub Copilot"
+    - "ChatGPT"
+  primary_goals:
+    - "Optimize WordPress Core Web Vitals"
+    - "Improve page load performance"
+    - "Maintain theme compatibility"
+  context_requirements:
+    - "WordPress plugin development experience"
+    - "Performance optimization knowledge"
+    - "PHP 8.0+ compatibility"
+
+# Development Workflow Configuration
+development_workflow:
+  feature_development:
+    steps:
+      1_user_story:
+        description: "Create user story in Gherkin format"
+        location: "docs/USER_STORIES.md"
+        template: |
+          Feature: ${feature_name}
+            As a ${user_type}
+            I want ${desired_action}
+            So that ${business_value}
+
+            Scenario: ${scenario_name}
+              Given ${precondition}
+              When ${action}
+              Then ${expected_result}
+              And ${additional_outcome}
+
+      2_branch_creation:
+        description: "Create feature branch"
+        command: "git checkout -b feat/${feature_name}"
+
+      3_documentation_first:
+        description: "Update documentation with planned changes"
+        files:
+          - "docs/PERFORMANCE.md"
+          - "README.md"
+          - "docs/USER_STORIES.md"
+
+      4_implementation:
+        description: "Implement the feature"
+        guidelines:
+          - "Follow WordPress coding standards"
+          - "Add PHPDoc comments"
+          - "Include inline documentation"
+          - "Consider performance impact"
+
+      5_testing:
+        description: "Add and run tests"
+        types:
+          - "Syntax validation"
+          - "Performance benchmarks"
+          - "Cross-theme compatibility"
+          - "WordPress version compatibility"
+
+      6_pr_creation:
+        description: "Create pull request"
+        command: "gh pr create"
+        requirements:
+          - "User story referenced"
+          - "Documentation updated"
+          - "Tests added"
+          - "Performance impact documented"
+
+  commit_workflow:
+    conventional_commits: true
+    steps:
+      - "Add feature files: git add ${files}"
+      - "Commit with type: git commit -m '${type}: ${message}'"
+      - "Push to remote: git push origin ${branch}"
+
+  review_workflow:
+    requirements:
+      - "Code follows WordPress standards"
+      - "Documentation is updated"
+      - "Tests are passing"
+      - "Performance is not degraded"
+      - "User story is satisfied"
+
+  release_workflow:
+    versioning:
+      major: "Breaking changes"
+      minor: "New features"
+      patch: "Bug fixes"
+    steps:
+      - "Update version numbers"
+      - "Update changelog"
+      - "Create release tag"
+      - "Deploy to WordPress.org"
+
+# Code Quality Standards
+code_quality:
+  linting:
+    php:
+      standard: "WordPress-Core"
+      tools:
+        - "PHP_CodeSniffer"
+        - "PHP-CS-Fixer"
+    js:
+      standard: "eslint:recommended"
+      config: ".eslintrc.json"
+  
+  performance_metrics:
+    thresholds:
+      page_load: "< 2s"
+      time_to_first_byte: "< 200ms"
+      core_web_vitals:
+        LCP: "< 2.5s"
+        FID: "< 100ms"
+        CLS: "< 0.1"
+  
+  security:
+    requirements:
+      - "Sanitize all inputs"
+      - "Escape all outputs"
+      - "Use nonces for forms"
+      - "Check capabilities"
+    scans:
+      - "WordPress VIP Security Scanner"
+      - "PHPCS Security Audit"
+  
+  accessibility:
+    standards:
+      - "WCAG 2.1 Level AA"
+    tools:
+      - "WAVE"
+      - "aXe"
+
+# AI Development Guidelines
+ai_development:
+  preferred_tools:
+    - "Codeium"
+    - "GitHub Copilot"
+    - "ChatGPT"
+  
+  code_generation_rules:
+    - "Must include PHPDoc comments"
+    - "Follow WordPress coding standards"
+    - "Include error handling"
+    - "Add type hints where possible"
+  
+  review_guidelines:
+    - "Check for security vulnerabilities"
+    - "Verify performance impact"
+    - "Ensure documentation completeness"
+    - "Validate accessibility compliance"
+  
+  documentation_requirements:
+    inline:
+      - "Function purpose"
+      - "Parameter descriptions"
+      - "Return value details"
+      - "Example usage"
+    external:
+      - "API documentation"
+      - "Installation guide"
+      - "Configuration options"
+      - "Troubleshooting guide"
+
+# Environment Setup
+development_environment:
+  local_setup:
+    requirements:
+      - "PHP 8.0+"
+      - "WordPress latest"
+      - "Node.js for build tools"
+      - "Composer"
+    recommended_tools:
+      - "Local by Flywheel"
+      - "VS Code"
+      - "PHPStorm"
+  
+  ci_environment:
+    services:
+      - "GitHub Actions"
+      - "WordPress.org SVN"
+    variables:
+      - "WORDPRESS_ORG_PASSWORD"
+      - "GITHUB_TOKEN"
+      - "TEST_SITE_DB_HOST"
+  
+  staging:
+    requirements:
+      - "Mirror production environment"
+      - "Test data set"
+      - "Multiple WordPress versions"
+  
+  production:
+    requirements:
+      - "WordPress.org plugin repository"
+      - "GitHub releases"
+      - "Documentation site"
+
+# Versioning Workflow
+versioning_workflow:
+  scheme: "semantic"
+  format: "MAJOR.MINOR.PATCH"
+  current_version: "1.1.7"
+  files_to_update:
+    - "core-metrics-plus.php"
+    - "readme.txt"
+    - "package.json"
+    - "composer.json"
+  
+  increment_rules:
+    major:
+      - "Breaking changes to public API"
+      - "Removal of deprecated features"
+      - "Major WordPress version compatibility changes"
+    minor:
+      - "New features (feat:)"
+      - "Non-breaking enhancements"
+      - "New optimization capabilities"
+    patch:
+      - "Bug fixes (fix:)"
+      - "Performance improvements"
+      - "Documentation updates"
+  
+  changelog_management:
+    location: "CHANGELOG.md"
+    sections:
+      - "Added"
+      - "Changed"
+      - "Deprecated"
+      - "Removed"
+      - "Fixed"
+      - "Security"
+    commit_to_section_mapping:
+      "feat": "Added"
+      "fix": "Fixed"
+      "docs": "Changed"
+      "perf": "Changed"
+      "security": "Security"
+      "breaking": "Changed"
+  
+  release_process:
+    pre_release:
+      - "Update version numbers in all files"
+      - "Update changelog"
+      - "Run full test suite"
+      - "Update readme.txt stable tag"
+      - "Create GitHub release draft"
+    
+    wordpress_org:
+      svn_repository: "https://plugins.svn.wordpress.org/core-metrics-plus"
+      assets:
+        - "assets/banner-772x250.png"
+        - "assets/icon-256x256.png"
+      required_files:
+        - "readme.txt"
+        - "core-metrics-plus.php"
+        - "includes/*"
+        - "assets/*"
+    
+    post_release:
+      - "Tag release on GitHub"
+      - "Update WordPress.org repository"
+      - "Close related GitHub issues"
+      - "Update documentation with new version"
+  
+  hotfix_workflow:
+    branch_naming: "hotfix/${version}"
+    requirements:
+      - "Critical bug fixes only"
+      - "Minimal changes"
+      - "Full test coverage"
+    process:
+      - "Branch from main/master"
+      - "Fix critical issue"
+      - "Update patch version"
+      - "Merge to main and develop"
+  
+  version_compatibility:
+    wordpress:
+      minimum: "6.0"
+      tested_up_to: "6.4"
+      requires_php: "8.0"
+    check_compatibility:
+      - "PHP versions"
+      - "WordPress core"
+      - "Popular themes"
+      - "Common plugins"
