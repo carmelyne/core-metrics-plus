@@ -2,7 +2,7 @@
 /*
 Plugin Name: Core Metrics Plus
 Description: Optimize your WordPress site's Core Web Vitals through smart resource loading and performance enhancements.
-Version: 1.1.0
+Version: 1.1.1
 Author: Carmelyne
 Plugin URI: https://github.com/carmelyne/core-metrics-plus
 */
