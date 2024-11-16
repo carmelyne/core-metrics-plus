@@ -27,8 +27,11 @@ define('CMP_PATH', plugin_dir_path(__FILE__));
 // Plugin URL
 define('CMP_URL', plugin_dir_url(__FILE__));
 
+// Include critical CSS functionality
+require_once CMP_PATH . 'includes/critical-css.php';
+
 // Require the update checker
-require_once plugin_dir_path(__DIR__) . 'plugin-update-checker/plugin-update-checker.php';
+require_once CMP_PATH . 'plugin-update-checker/plugin-update-checker.php';
 
 // Initialize update checker
 $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
@@ -39,9 +42,6 @@ $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChe
 
 // Configure to use GitHub releases
 $myUpdateChecker->getVcsApi()->enableReleaseAssets();
-
-// Include core features
-require_once CMP_PATH . 'includes/critical-css.php';
 
 /**
  * Add fetch priority to images and videos
