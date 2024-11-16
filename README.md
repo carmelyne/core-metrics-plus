@@ -51,12 +51,12 @@ Core Metrics Plus uses GitHub releases for updates. When a new version is availa
 ## Documentation
 
 - [Changelog](CHANGELOG.md) - Version history and updates
-- [AI Assistance Guidelines](ai-assist.md) - Development workflow and standards
+- [AI Assistance Guidelines](AI_ASSIST.md) - Development workflow and standards
 - [Testing Guidelines](TESTING.md) - Testing procedures and requirements
 
 ## AI Assistance Guidelines
 
-Our [AI Assistance Guidelines](ai-assist.md) contain comprehensive documentation for development workflow and standards:
+Our [AI Assistance Guidelines](AI_ASSIST.md) contain comprehensive documentation for development workflow and standards:
 
 ### Key Sections
 1. **Project Overview**
@@ -99,13 +99,13 @@ Our [AI Assistance Guidelines](ai-assist.md) contain comprehensive documentation
    - Code improvements
    - Enhancement roadmap
 
-For detailed information about any of these sections, please refer to the [full documentation](ai-assist.md).
+For detailed information about any of these sections, please refer to the [full documentation](AI_ASSIST.md).
 
 ## Contributing
 
 We welcome contributions! Please follow these steps:
 
-1. Check our [AI Assistance Guidelines](ai-assist.md) for development workflow
+1. Check our [AI Assistance Guidelines](AI_ASSIST.md) for development workflow
 2. Fork the repository
 3. Create a feature branch
 4. Make your changes
@@ -115,7 +115,7 @@ We welcome contributions! Please follow these steps:
 
 - Create an [issue](https://github.com/carmelyne/core-metrics-plus/issues) for bug reports
 - Start a [discussion](https://github.com/carmelyne/core-metrics-plus/discussions) for questions
-- Check [troubleshooting](ai-assist.md#troubleshooting) for common issues
+- Check [troubleshooting](AI_ASSIST.md#troubleshooting) for common issues
 
 ## License
 
