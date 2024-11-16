@@ -1,5 +1,6 @@
 {
     "require": {
+        "php": ">=8.0",
         "yahnis-elsts/plugin-update-checker": "^5.0"
     },
     "require-dev": {
@@ -7,13 +8,16 @@
         "wp-coding-standards/wpcs": "^2.3",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0"
     },
-    "scripts": {
-        "test": "phpunit",
-        "phpcs": "phpcs --standard=WordPress ./includes/"
-    },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "8.0.30"
         }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "phpcs": "phpcs --standard=WordPress ./includes/"
     }
 }
