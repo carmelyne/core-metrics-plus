@@ -1,0 +1,95 @@
+# Core Metrics Plus Development Workflow
+
+# Version Control
+version_control:
+  branch_naming:
+    feature: "feat/*"
+    bugfix: "fix/*"
+    documentation: "docs/*"
+    testing: "test/*"
+    ci: "ci/*"
+
+  commit_messages:
+    # Using Conventional Commits
+    feat: "New features"
+    fix: "Bug fixes"
+    docs: "Documentation changes"
+    style: "Code style changes"
+    refactor: "Code refactoring"
+    test: "Test changes"
+    ci: "CI/CD changes"
+    chore: "Other changes"
+
+  pr_workflow:
+    create_branch:
+      command: "git checkout -b ${branch_type}/${branch_name}"
+      example: "git checkout -b feat/new-feature"
+
+    make_changes:
+      commit_format: "${type}: ${description}\n\n${details}"
+      example: |
+        feat: add new optimization feature
+        
+        - Add feature X
+        - Update docs
+        - Add tests
+
+    create_pr:
+      command: "gh pr create --title '${commit_type}: ${description}' --body '${pr_body}'"
+      template: |
+        ## Changes
+        ${bullet_points}
+
+        ## Testing
+        - [ ] Tests added/updated
+        - [ ] Documentation updated
+        - [ ] No breaking changes
+
+    review_process:
+      checks:
+        - "GitHub Actions workflow passes"
+        - "Code review approved"
+        - "Documentation updated"
+
+# Plugin Version Management
+versioning:
+  format: "MAJOR.MINOR.PATCH"
+  rules:
+    MAJOR: "Breaking changes"
+    MINOR: "New features (feat:)"
+    PATCH: "Bug fixes (fix:)"
+
+# Testing Requirements
+testing:
+  environments:
+    - "PHP 8.0"
+    - "PHP 8.1"
+    - "WordPress latest"
+    - "WordPress 6.2"
+  
+  types:
+    - "Syntax validation"
+    - "Basic smoke tests"
+    - "File integrity checks"
+
+# Documentation Structure
+documentation:
+  required_files:
+    - "README.md"
+    - "docs/PERFORMANCE.md"
+    - "docs/USER_STORIES.md"
+  
+  code_comments:
+    style: "PHPDoc"
+    required_sections:
+      - "@package"
+      - "@since"
+      - "@param (if applicable)"
+      - "@return (if applicable)"
+
+# Required Files Check
+function_check_required_files:
+  required_files:
+    - "docs/AI_ASSIST.md"
+    - "core-metrics-plus.php"
+    - "docs/CHANGELOG.md"
