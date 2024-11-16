@@ -48,9 +48,8 @@ $myUpdateChecker->getVcsApi()->enableReleaseAssets();
  */
 function add_fetch_priority() {
     try {
-        console.time('fetchPriorityOptimization');
-        
         $script = "
+            console.time('fetchPriorityOptimization');
             document.addEventListener('DOMContentLoaded', function() {
                 const elements = document.querySelectorAll('img, video');
                 let optimized = 0;
@@ -63,12 +62,11 @@ function add_fetch_priority() {
                 });
                 
                 console.info('Core Metrics Plus: Optimized ' + optimized + ' resources with fetch priority');
+                console.timeEnd('fetchPriorityOptimization');
             });
         ";
         
         wp_add_inline_script('jquery', $script);
-        console.timeEnd('fetchPriorityOptimization');
-        
     } catch (Exception $e) {
         error_log('Core Metrics Plus - Fetch Priority Error: ' . $e->getMessage());
     }

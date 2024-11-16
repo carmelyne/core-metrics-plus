@@ -13,7 +13,7 @@ class CMP_Critical_CSS {
     private static $instance = null;
     private $critical_css_cache = [];
     private $cache_key_prefix = 'cmp_critical_css_';
-    private $cache_duration = DAY_IN_SECONDS;
+    private $cache_duration = 86400; // DAY_IN_SECONDS equivalent
 
     /**
      * Get singleton instance
