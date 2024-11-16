@@ -54,6 +54,53 @@ Core Metrics Plus uses GitHub releases for updates. When a new version is availa
 - [AI Assistance Guidelines](ai-assist.md) - Development workflow and standards
 - [Testing Guidelines](TESTING.md) - Testing procedures and requirements
 
+## AI Assistance Guidelines
+
+Our [AI Assistance Guidelines](ai-assist.md) contain comprehensive documentation for development workflow and standards:
+
+### Key Sections
+1. **Project Overview**
+   - Repository structure
+   - Key components and their purposes
+   - Main file organization
+
+2. **Version Control Workflow**
+   - Step-by-step version update process
+   - Git commands sequence
+   - Release creation guidelines
+
+3. **Testing Procedures**
+   - Pre-release checklist
+   - Update system testing
+   - Feature verification process
+
+4. **Code Standards**
+   - PHP coding standards
+   - JavaScript best practices
+   - Documentation requirements
+
+5. **Update System**
+   - GitHub integration setup
+   - Release requirements
+   - Update verification steps
+
+6. **Common Tasks**
+   - Adding new features
+   - Bug fixing process
+   - Performance improvements
+
+7. **Troubleshooting**
+   - Update system issues
+   - Performance problems
+   - Common error solutions
+
+8. **Future Development**
+   - Planned features
+   - Code improvements
+   - Enhancement roadmap
+
+For detailed information about any of these sections, please refer to the [full documentation](ai-assist.md).
+
 ## Contributing
 
 We welcome contributions! Please follow these steps:
