@@ -54,38 +54,59 @@ class CMP_Critical_CSS {
 
         // Get all enqueued stylesheets
         global $wp_styles;
+        if (!isset($wp_styles) || !is_object($wp_styles)) {
+            return '';
+        }
+
         $critical_css = '';
         
-        foreach ($wp_styles->queue as $handle) {
-            $stylesheet = $wp_styles->registered[$handle];
-            $css_file = $stylesheet->src;
-            
-            // Convert relative URL to absolute
-            if (strpos($css_file, '//') === false) {
-                $css_file = site_url($css_file);
-            }
+        if (!empty($wp_styles->queue)) {
+            foreach ($wp_styles->queue as $handle) {
+                if (!isset($wp_styles->registered[$handle])) {
+                    continue;
+                }
+                
+                $stylesheet = $wp_styles->registered[$handle];
+                if (!isset($stylesheet->src)) {
+                    continue;
+                }
+                
+                $css_file = $stylesheet->src;
+                
+                // Convert relative URL to absolute
+                if (strpos($css_file, '//') === false) {
+                    if (function_exists('site_url')) {
+                        $css_file = site_url($css_file);
+                    } else {
+                        continue;
+                    }
+                }
 
-            // Get CSS content
-            $response = wp_remote_get($css_file);
-            if (is_wp_error($response)) {
-                continue;
-            }
+                // Get CSS content
+                $response = wp_remote_get($css_file);
+                if (is_wp_error($response)) {
+                    continue;
+                }
 
-            $css = wp_remote_retrieve_body($response);
-            
-            // Extract critical rules (above the fold)
-            $critical_selectors = $this->get_critical_selectors($css);
-            if (!empty($critical_selectors)) {
-                $critical_css .= "/* From {$stylesheet->handle} */\n";
-                $critical_css .= implode("\n", $critical_selectors) . "\n";
+                $css = wp_remote_retrieve_body($response);
+                if (empty($css)) {
+                    continue;
+                }
+                
+                // Extract critical rules (above the fold)
+                $critical_selectors = $this->get_critical_selectors($css);
+                if (!empty($critical_selectors)) {
+                    $critical_css .= "/* From {$stylesheet->handle} */\n";
+                    $critical_css .= implode("\n", $critical_selectors) . "\n";
+                }
             }
         }
 
-        // Minify critical CSS
-        $critical_css = $this->minify_css($critical_css);
-
-        // Cache the result
-        set_transient($cache_key, $critical_css, $this->cache_duration);
+        // Cache the results
+        if (!empty($critical_css)) {
+            $critical_css = $this->minify_css($critical_css);
+            set_transient($cache_key, $critical_css, $this->cache_duration);
+        }
 
         return $critical_css;
     }
@@ -151,11 +172,15 @@ class CMP_Critical_CSS {
      * Inject critical CSS inline
      */
     public function inject_critical_css() {
+        if (!function_exists('get_permalink')) {
+            return;
+        }
+        
         $critical_css = $this->extract_critical_css();
         if (!empty($critical_css)) {
             echo "\n<!-- Core Metrics Plus Critical CSS -->\n";
             echo "<style id='cmp-critical-css'>\n";
-            echo $critical_css;
+            echo esc_html($critical_css);
             echo "\n</style>\n";
         }
     }
@@ -165,38 +190,26 @@ class CMP_Critical_CSS {
      */
     public function defer_non_critical_css() {
         global $wp_styles;
-        
-        echo "\n<!-- Core Metrics Plus Deferred CSS Loading -->\n";
-        echo "<noscript id='cmp-deferred-styles'>\n";
-        
-        foreach ($wp_styles->queue as $handle) {
-            $stylesheet = $wp_styles->registered[$handle];
-            $href = $stylesheet->src;
-            
-            // Convert relative URL to absolute
-            if (strpos($href, '//') === false) {
-                $href = site_url($href);
-            }
-            
-            echo "<link rel='stylesheet' id='{$handle}-css' href='{$href}' type='text/css' media='all' />\n";
+        if (!isset($wp_styles) || !is_object($wp_styles)) {
+            return;
         }
-        
-        echo "</noscript>\n";
-        
-        // Add script to load styles after page load
-        echo "<script>
-        var cmpLoadDeferredStyles = function() {
-            var addStylesNode = document.getElementById('cmp-deferred-styles');
-            var replacement = document.createElement('div');
-            replacement.innerHTML = addStylesNode.textContent;
-            document.body.appendChild(replacement);
-            addStylesNode.parentElement.removeChild(addStylesNode);
-        };
-        var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-            window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-        if (raf) raf(function() { window.setTimeout(cmpLoadDeferredStyles, 0); });
-        else window.addEventListener('load', cmpLoadDeferredStyles);
-        </script>\n";
+
+        if (!empty($wp_styles->queue)) {
+            foreach ($wp_styles->queue as $handle) {
+                if (!isset($wp_styles->registered[$handle])) {
+                    continue;
+                }
+                
+                $stylesheet = $wp_styles->registered[$handle];
+                if (!isset($stylesheet->src)) {
+                    continue;
+                }
+
+                wp_dequeue_style($handle);
+                wp_deregister_style($handle);
+                wp_enqueue_style($handle, $stylesheet->src, array(), null, 'print');
+            }
+        }
     }
 
     /**
@@ -204,15 +217,24 @@ class CMP_Critical_CSS {
      */
     public function remove_render_blocking_css() {
         global $wp_styles;
+        if (!isset($wp_styles) || !is_object($wp_styles)) {
+            return;
+        }
+
+        $exclude = array('admin-bar', 'dashicons');
         
-        foreach ($wp_styles->queue as $handle) {
-            // Don't dequeue admin styles
-            if (strpos($handle, 'admin') !== false || strpos($handle, 'customize') !== false) {
-                continue;
+        if (!empty($wp_styles->queue)) {
+            foreach ($wp_styles->queue as $handle) {
+                if (in_array($handle, $exclude)) {
+                    continue;
+                }
+                
+                if (!isset($wp_styles->registered[$handle])) {
+                    continue;
+                }
+                
+                wp_style_add_data($handle, 'preload', true);
             }
-            
-            // Dequeue all other styles (they'll be loaded via JavaScript)
-            wp_dequeue_style($handle);
         }
     }
 }
