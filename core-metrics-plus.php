@@ -10,10 +10,13 @@ Plugin URI: https://github.com/carmelyne/core-metrics-plus
 if (file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php')) {
     require_once dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php';
     $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-        'https://raw.githubusercontent.com/carmelyne/core-metrics-plus/main/plugin.json',
+        'https://github.com/carmelyne/core-metrics-plus',
         __FILE__,
         'core-metrics-plus'
     );
+    
+    // Set the branch that contains the stable release
+    $myUpdateChecker->setBranch('main');
 }
 
 function add_fetch_priority() {
