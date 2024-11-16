@@ -21,17 +21,21 @@ class CMP_Critical_CSS {
         'style',          // Common theme style handle
         'main-style',     // Another common theme style handle
         'site-style',     // Site-wide styles
-        'header-style'    // Header styles
+        'header-style',   // Header styles
+        'twenty',         // Twenty* theme styles
+        'elementor',      // Elementor styles
+        'astra',          // Astra theme styles
+        'generate',       // GeneratePress styles
+        'oceanwp',        // OceanWP styles
+        'kadence'         // Kadence styles
     );
 
+    // Only exclude obvious admin styles
     private $excluded_handles = array(
         'admin-bar',
-        'dashicons',
         'wp-admin',
-        'login',
         'customize-preview',
-        'wp-custom-admin',
-        'wp-includes'
+        'wp-custom-admin'
     );
 
     // CSS rules that should always be included
@@ -44,6 +48,7 @@ class CMP_Critical_CSS {
         '.logo',
         '.site-logo',
         '.custom-logo',
+        '.custom-logo-link',
         '.wp-custom-logo',
         'img',
         '.wp-post-image',
@@ -55,7 +60,20 @@ class CMP_Critical_CSS {
         '.site-content',
         'article',
         '.post',
-        '.page'
+        '.page',
+        '.post-thumbnail',
+        '.attachment-',    // Catches all attachment image sizes
+        '.size-',         // Catches all size-specific styles
+        '.featured-image',
+        '.entry-header',
+        '.site-header',
+        '.site-branding',
+        'nav',
+        '.nav',
+        '.menu',
+        '#site-navigation',
+        '.main-navigation',
+        '.navigation'
     );
 
     public static function init() {
@@ -81,13 +99,16 @@ class CMP_Critical_CSS {
 
         $critical_css = $this->get_base_critical_css();
         
+        // Get the current theme's stylesheet handle
+        $theme_style = get_stylesheet();
+        
         foreach ($wp_styles->queue as $handle) {
             // Skip if style is not registered
             if (!isset($wp_styles->registered[$handle])) {
                 continue;
             }
 
-            // Skip admin-related styles
+            // Skip obvious admin-related styles
             if ($this->is_admin_style($handle)) {
                 continue;
             }
@@ -97,8 +118,13 @@ class CMP_Critical_CSS {
                 continue;
             }
 
-            // Always include critical handles
-            $is_critical = $this->is_critical_handle($handle);
+            // Consider a style critical if:
+            // 1. It's in our critical handles list
+            // 2. It's the current theme's stylesheet
+            // 3. It's a dependency of the theme's stylesheet
+            $is_critical = $this->is_critical_handle($handle) || 
+                          $handle === $theme_style || 
+                          $this->is_theme_dependency($handle);
             
             $cache_key = $this->cache_key_prefix . md5($style->src);
             $cached = get_transient($cache_key);
@@ -111,7 +137,9 @@ class CMP_Critical_CSS {
             }
 
             $css_file = $style->src;
-            if (strpos($css_file, '//') === false) {
+            if (strpos($css_file, '//') === 0) {
+                $css_file = 'https:' . $css_file;
+            } elseif (strpos($css_file, '/') === 0) {
                 $css_file = site_url($css_file);
             }
 
@@ -119,8 +147,8 @@ class CMP_Critical_CSS {
             if (!is_wp_error($response)) {
                 $css = wp_remote_retrieve_body($response);
                 if (!empty($css)) {
-                    $processed_css = $this->process_css($css, $handle);
-                    if ($is_critical) {
+                    $processed_css = $this->process_css($css, $handle, $is_critical);
+                    if ($is_critical || $this->has_critical_styles($css)) {
                         $critical_css .= $processed_css;
                     }
                     set_transient($cache_key, $processed_css, $this->cache_duration);
@@ -139,10 +167,19 @@ class CMP_Critical_CSS {
     private function get_base_critical_css() {
         // Essential CSS rules that should always be included
         return "
-            img, figure { max-width: 100%; height: auto; }
-            .custom-logo, .site-logo, .wp-post-image { display: block; }
-            .wp-block-image img { height: auto; }
+            /* Base critical CSS */
+            img, figure { max-width: 100%; height: auto; display: block; }
+            .custom-logo-link, .custom-logo, .site-logo, .wp-post-image { display: block; max-width: 100%; height: auto; }
+            .wp-block-image img { height: auto; max-width: 100%; }
+            .post-thumbnail img { max-width: 100%; height: auto; display: block; }
+            .site-header, .site-branding { display: block; }
+            .featured-image img { max-width: 100%; height: auto; display: block; }
             body { opacity: 1 !important; }
+            
+            /* Fix for various theme layouts */
+            .site-logo-img img { display: block; max-width: 100%; }
+            .header-image img { display: block; max-width: 100%; }
+            .site-branding img { display: block; max-width: 100%; }
         ";
     }
 
@@ -153,54 +190,55 @@ class CMP_Critical_CSS {
                 return true;
             }
         }
+        return false;
+    }
 
-        // Check if it's the active theme's main stylesheet
-        $style_handle = get_stylesheet();
-        if ($handle === $style_handle || $handle === $style_handle . '-style') {
-            return true;
+    private function is_theme_dependency($handle) {
+        global $wp_styles;
+        $theme_style = get_stylesheet();
+        
+        if (isset($wp_styles->registered[$theme_style])) {
+            $deps = $wp_styles->registered[$theme_style]->deps;
+            return in_array($handle, $deps);
         }
+        
+        return false;
+    }
 
+    private function has_critical_styles($css) {
+        foreach ($this->critical_selectors as $selector) {
+            if (strpos($css, $selector) !== false) {
+                return true;
+            }
+        }
         return false;
     }
 
     private function is_admin_style($handle) {
-        // Check against excluded handles
+        // Only exclude obvious admin styles
         foreach ($this->excluded_handles as $excluded) {
             if (strpos($handle, $excluded) !== false) {
                 return true;
             }
         }
-
-        // Check if style src contains admin paths
-        global $wp_styles;
-        $style = $wp_styles->registered[$handle];
-        if ($style->src) {
-            $admin_paths = array('/wp-admin/', '/wp-includes/css/admin-', '/wp-includes/css/customize-');
-            foreach ($admin_paths as $path) {
-                if (strpos($style->src, $path) !== false) {
-                    return true;
-                }
-            }
-        }
-
         return false;
     }
 
-    private function process_css($css, $handle) {
+    private function process_css($css, $handle, $is_critical) {
         // Basic minification
         $css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
         $css = str_replace(["\r\n", "\r", "\n", "\t"], '', $css);
         $css = preg_replace('/\s+/', ' ', $css);
 
-        // If it's a critical handle, include all CSS
-        if ($this->is_critical_handle($handle)) {
+        // If it's a critical handle or contains critical selectors, include all CSS
+        if ($is_critical || $this->has_critical_styles($css)) {
             return sprintf("/* From %s */\n%s\n", esc_html($handle), $css);
         }
 
         // Otherwise, only include critical selectors
         $critical_css = '';
         foreach ($this->critical_selectors as $selector) {
-            if (preg_match_all('/' . preg_quote($selector) . '[^}]+\{[^}]+\}/i', $css, $matches)) {
+            if (preg_match_all('/' . preg_quote($selector, '/') . '[^}]+\{[^}]+\}/i', $css, $matches)) {
                 $critical_css .= implode("\n", $matches[0]);
             }
         }
@@ -221,13 +259,32 @@ class CMP_Critical_CSS {
             }
 
             // Don't defer critical styles
-            if ($this->is_critical_handle($handle)) {
+            if ($this->is_critical_handle($handle) || $this->is_theme_dependency($handle)) {
                 continue;
             }
 
-            // Skip admin-related styles
+            // Skip obvious admin-related styles
             if ($this->is_admin_style($handle)) {
                 continue;
+            }
+
+            // Check if the stylesheet contains critical styles
+            $style = $wp_styles->registered[$handle];
+            if ($style->src) {
+                $css_file = $style->src;
+                if (strpos($css_file, '//') === 0) {
+                    $css_file = 'https:' . $css_file;
+                } elseif (strpos($css_file, '/') === 0) {
+                    $css_file = site_url($css_file);
+                }
+
+                $response = wp_remote_get($css_file);
+                if (!is_wp_error($response)) {
+                    $css = wp_remote_retrieve_body($response);
+                    if ($this->has_critical_styles($css)) {
+                        continue;
+                    }
+                }
             }
 
             // Defer non-critical styles
