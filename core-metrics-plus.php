@@ -15,16 +15,21 @@ if (file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checke
         'core-metrics-plus'
     );
 
-    // Set it to use GitHub releases
+    // Set it to use GitHub releases and branches
+    $myUpdateChecker->setBranch('main');
     $myUpdateChecker->getVcsApi()->enableReleaseAssets();
     
-    // Enable debug mode
+    // Enable debug mode with verbose logging
     $myUpdateChecker->debugMode = true;
+    
+    // Set update stability (stable, unstable, any)
+    $myUpdateChecker->stabilityFlags = array('stable');
 
     // Force an update check on every page load (temporary, for debugging)
     add_action('init', function() use ($myUpdateChecker) {
         delete_site_transient('update_plugins');
         delete_site_transient('puc_check_count_core-metrics-plus');
+        wp_clean_plugins_cache(true);
         $myUpdateChecker->checkForUpdates();
     });
     
@@ -32,12 +37,15 @@ if (file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checke
     add_action('admin_notices', function() use ($myUpdateChecker) {
         if (current_user_can('manage_options')) {
             $info = $myUpdateChecker->getUpdateInfo();
+            $api = $myUpdateChecker->getVcsApi();
             echo '<div class="notice notice-info">';
             echo '<p><strong>Core Metrics Plus Debug Info:</strong></p>';
             echo '<pre>';
             echo "Current Version: " . get_plugin_data(__FILE__)['Version'] . "\n";
+            echo "Branch: " . $myUpdateChecker->getBranch() . "\n";
             echo "Update Checker URL: " . $myUpdateChecker->getMetadataUrl() . "\n";
             echo "Last Check: " . date('Y-m-d H:i:s', get_site_transient('puc_last_check_core-metrics-plus')) . "\n";
+            echo "Latest Release: " . print_r($api->getLatestRelease(), true) . "\n";
             echo "Update Info: " . print_r($info, true) . "\n";
             echo '</pre>';
             echo '</div>';
