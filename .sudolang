@@ -1,80 +1,51 @@
-# Core Metrics Plus AI Configuration
+WHEN starting new AI session:
+  FIRST check existence of required files:
+    - docs/AI_ASSIST.md
+    - core-metrics-plus.php
+    - docs/CHANGELOG.md
+  
+  IF any required file missing:
+    THEN notify user and request file creation
 
-# Project Configuration
-project:
-  name: "Core Metrics Plus"
-  type: "wordpress-plugin"
-  version_file: "core-metrics-plus.php"
-  changelog_file: "docs/CHANGELOG.md"
-  documentation_root: "docs/"
+WHEN making git changes:
+  FIRST run "git status"
+  THEN review changed files
+  NEVER use "git add ."
+  INSTEAD add files individually:
+    FOR EACH changed_file:
+      run "git add {changed_file}"
 
-# Git Workflow Settings
-git:
-  commit_types:
-    - feat     # New features
-    - fix      # Bug fixes
-    - docs     # Documentation changes
-    - style    # Code style changes
-    - refactor # Code refactoring
-    - test     # Adding/modifying tests
-    - chore    # Maintenance tasks
-  workflow:
-    add_all: false  # Never use 'git add .'
-    status_first: true  # Always check status before changes
-    atomic_commits: true  # One feature/fix per commit
+WHEN updating version:
+  CHECK version numbers match in:
+    - core-metrics-plus.php header
+    - core-metrics-plus.php CMP_VERSION
+    - docs/CHANGELOG.md
+  
+  IF versions don't match:
+    THEN update all locations to match
 
-# WordPress Plugin Settings
-wordpress:
-  min_version: "5.0"
-  php_min_version: "7.4"
-  text_domain: "core-metrics-plus"
-  function_prefix: "cmp_"
-  class_prefix: "CMP_"
+WHEN creating commit:
+  USE semantic commit types:
+    - feat: new features
+    - fix: bug fixes
+    - docs: documentation
+    - style: formatting
+    - refactor: code restructure
+    - test: testing
+    - chore: maintenance
+  
+  FORMAT message as:
+    type: Brief description
+    
+    - Detailed point 1
+    - Detailed point 2
 
-# Release Process
-release:
-  zip_exclusions:
-    - ".*"
-    - "__MACOSX"
-    - "node_modules"
-    - "tests"
-  version_update_files:
-    - "core-metrics-plus.php:header"
-    - "core-metrics-plus.php:CMP_VERSION"
-    - "docs/CHANGELOG.md"
-  zip_command: "zip -r assets/core-metrics-plus-[VERSION].zip . -x \".*\" -x \"__MACOSX\""
-
-# Code Standards
-standards:
-  php:
-    style: "WordPress-Core"
-    compatibility: "7.4+"
-  js:
-    format: "prettier"
-    standard: "wordpress"
-
-# Documentation Requirements
-docs:
-  required_files:
-    - "README.md"
-    - "docs/CHANGELOG.md"
-    - "docs/AI_ASSIST.md"
-    - "docs/TESTING.md"
-  changelog_format: "Keep a Changelog"
-  versioning: "SemVer"
-
-# AI Assistant Behavior
-ai_assist:
-  primary_docs: "docs/AI_ASSIST.md"
-  workflow_docs: "docs/WORKFLOW.md"
-  check_files_on_start:
-    - ".sudolang"
-    - "docs/AI_ASSIST.md"
-    - "core-metrics-plus.php"
-  prohibited_commands:
-    - "git add ."
-    - "rm -rf"
-  required_checks:
-    - "git status before changes"
-    - "version numbers match"
-    - "changelog updated"
+WHEN creating release:
+  FIRST verify:
+    - All version numbers match
+    - CHANGELOG.md is updated
+    - Tests pass
+  THEN:
+    - Create zip excluding ".*" and "__MACOSX"
+    - Tag version
+    - Push changes and tags
