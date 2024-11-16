@@ -3,7 +3,7 @@
  * Plugin Name: Core Metrics Plus
  * Plugin URI: https://github.com/carmelyne/core-metrics-plus
  * Description: Optimize Core Web Vitals through smart resource loading and performance enhancements
- * Version: 1.1.5
+ * Version: 1.1.6
  * Author: Carmelyne
  * Author URI: https://github.com/carmelyne
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin version
-define('CMP_VERSION', '1.1.5');
+define('CMP_VERSION', '1.1.6');
 
 // Plugin path
 define('CMP_PATH', plugin_dir_path(__FILE__));
