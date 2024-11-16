@@ -10,17 +10,23 @@ A WordPress plugin designed to optimize Core Web Vitals through smart resource l
 
 ```
 core-metrics-plus/
-├── assets/               # Distribution files
-│   └── *.zip            # Release packages
-├── docs/                # Documentation
-│   ├── AI_ASSIST.md     # Development workflow
-│   ├── CHANGELOG.md     # Version history
-│   ├── LICENSE.md       # GPL v2 license
-│   └── TESTING.md       # Testing guidelines
-├── src/                 # Source code
-│   └── *.php           # PHP source files
-├── composer.json        # Dependencies
-└── README.md           # This file
+├── assets/                    # Distribution files
+│   └── *.zip                 # Release packages
+├── docs/                     # Documentation
+│   ├── AI_ASSIST.md         # AI Development workflow
+│   ├── CHANGELOG.md         # Version history
+│   ├── LICENSE.md           # GPL v2 license
+│   ├── PERFORMANCE.md       # Performance benchmarks
+│   ├── TESTING.md          # Testing guidelines
+│   └── USER_STORIES.md      # Feature specifications
+├── includes/                 # Core plugin files
+│   ├── critical-css.php     # CSS optimization
+│   └── script-optimizer.php # Script management
+├── plugin-update-checker/    # Update system
+├── vendor/                   # Dependencies
+├── composer.json            # Package management
+├── sudolang.yaml            # AI development config
+└── README.md               # This file
 ```
 
 ## ✨ Features
@@ -67,24 +73,30 @@ Core Metrics Plus uses GitHub releases for updates. When a new version is availa
 
 ## 📚 Documentation
 
+- [AI Development](docs/AI_ASSIST.md) - Development workflow and AI guidelines
 - [Changelog](docs/CHANGELOG.md) - Version history and updates
+- [Performance](docs/PERFORMANCE.md) - Performance benchmarks and targets
 - [Testing Guidelines](docs/TESTING.md) - Testing procedures and requirements
+- [User Stories](docs/USER_STORIES.md) - Feature specifications and requirements
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+We follow an AI-assisted, user-story-driven development approach. Please follow these steps:
 
-1. Check our [development guidelines](docs/AI_ASSIST.md) for development workflow
-2. Fork the repository
-3. Create a feature branch
-4. Make your changes
-5. Submit a pull request
+1. Review our [development workflow](docs/AI_ASSIST.md)
+2. Check the [AI development configuration](sudolang.yaml) for guidelines
+3. Start with a user story in [USER_STORIES.md](docs/USER_STORIES.md)
+4. Fork the repository
+5. Create a feature branch following our naming convention
+6. Make your changes
+7. Submit a pull request with appropriate documentation
 
 ## 💬 Support
 
 - Create an [issue](https://github.com/carmelyne/core-metrics-plus/issues) for bug reports
 - Start a [discussion](https://github.com/carmelyne/core-metrics-plus/discussions) for questions
-- Check [troubleshooting](docs/AI_ASSIST.md#troubleshooting) for common issues
+- Check [performance docs](docs/PERFORMANCE.md) for optimization tips
+- Review [user stories](docs/USER_STORIES.md) for feature requests
 
 ## 📄 License
 
