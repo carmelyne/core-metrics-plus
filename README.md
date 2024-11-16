@@ -68,14 +68,13 @@ Core Metrics Plus uses GitHub releases for updates. When a new version is availa
 ## 📚 Documentation
 
 - [Changelog](docs/CHANGELOG.md) - Version history and updates
-- [AI Assistance Guidelines](docs/AI_ASSIST.md) - Development workflow and standards
 - [Testing Guidelines](docs/TESTING.md) - Testing procedures and requirements
 
 ## 🤝 Contributing
 
 We welcome contributions! Please follow these steps:
 
-1. Check our [AI Assistance Guidelines](docs/AI_ASSIST.md) for development workflow
+1. Check our [development guidelines](docs/AI_ASSIST.md) for development workflow
 2. Fork the repository
 3. Create a feature branch
 4. Make your changes

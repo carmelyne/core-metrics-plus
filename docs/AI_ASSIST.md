@@ -23,26 +23,45 @@ core-metrics-plus/
 
 ## Version Control Workflow
 
+### Git Best Practices
+
+1. Always check status before making changes:
+   ```bash
+   git status
+   ```
+
+2. Add files individually (NEVER use git add .):
+   ```bash
+   git add core-metrics-plus.php
+   git add docs/CHANGELOG.md
+   ```
+
+3. Create semantic commit messages:
+   ```bash
+   git commit -m "type: Brief description
+
+   - Detailed point 1
+   - Detailed point 2"
+   ```
+   Types: feat, fix, docs, style, refactor, test, chore
+
+4. Tag releases:
+   ```bash
+   git tag -a vX.X.X -m "Version X.X.X - Brief description"
+   git push origin main --tags
+   ```
+
 ### Making Changes
 1. Update version numbers in:
-   - `core-metrics-plus.php` (Plugin header)
-   - `CHANGELOG.md`
+   - `core-metrics-plus.php` (Plugin header and CMP_VERSION)
+   - `docs/CHANGELOG.md`
 
 2. Create zip file:
    ```bash
-   zip -r core-metrics-plus-[VERSION].zip . -x "*.git*" "*.DS_Store" "*.zip"
+   zip -r assets/core-metrics-plus-[VERSION].zip . -x ".*" -x "__MACOSX"
    ```
 
-3. Git commands sequence:
-   ```bash
-   git add .
-   git commit -m "Version X.X.X: Brief description"
-   git push origin main
-   git tag -a X.X.X -m "Version X.X.X: Detailed description"
-   git push origin X.X.X
-   ```
-
-4. GitHub Release:
+3. GitHub Release:
    - Create new release using the tag
    - Copy relevant CHANGELOG section
    - Upload zip file as release asset
