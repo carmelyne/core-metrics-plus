@@ -230,6 +230,109 @@ ai_notes:
     - "Core Web Vitals impact"
     - "WordPress version compatibility"
 
+# Code Quality Standards
+code_quality:
+  linting:
+    php:
+      standard: "WordPress-Core"
+      tools:
+        - "PHP_CodeSniffer"
+        - "PHP-CS-Fixer"
+    js:
+      standard: "eslint:recommended"
+      config: ".eslintrc.json"
+  
+  performance_metrics:
+    thresholds:
+      page_load: "< 2s"
+      time_to_first_byte: "< 200ms"
+      core_web_vitals:
+        LCP: "< 2.5s"
+        FID: "< 100ms"
+        CLS: "< 0.1"
+  
+  security:
+    requirements:
+      - "Sanitize all inputs"
+      - "Escape all outputs"
+      - "Use nonces for forms"
+      - "Check capabilities"
+    scans:
+      - "WordPress VIP Security Scanner"
+      - "PHPCS Security Audit"
+  
+  accessibility:
+    standards:
+      - "WCAG 2.1 Level AA"
+    tools:
+      - "WAVE"
+      - "aXe"
+
+# AI Development Guidelines
+ai_development:
+  preferred_tools:
+    - "Codeium"
+    - "GitHub Copilot"
+    - "ChatGPT"
+  
+  code_generation_rules:
+    - "Must include PHPDoc comments"
+    - "Follow WordPress coding standards"
+    - "Include error handling"
+    - "Add type hints where possible"
+  
+  review_guidelines:
+    - "Check for security vulnerabilities"
+    - "Verify performance impact"
+    - "Ensure documentation completeness"
+    - "Validate accessibility compliance"
+  
+  documentation_requirements:
+    inline:
+      - "Function purpose"
+      - "Parameter descriptions"
+      - "Return value details"
+      - "Example usage"
+    external:
+      - "API documentation"
+      - "Installation guide"
+      - "Configuration options"
+      - "Troubleshooting guide"
+
+# Environment Setup
+development_environment:
+  local_setup:
+    requirements:
+      - "PHP 8.0+"
+      - "WordPress latest"
+      - "Node.js for build tools"
+      - "Composer"
+    recommended_tools:
+      - "Local by Flywheel"
+      - "VS Code"
+      - "PHPStorm"
+  
+  ci_environment:
+    services:
+      - "GitHub Actions"
+      - "WordPress.org SVN"
+    variables:
+      - "WORDPRESS_ORG_PASSWORD"
+      - "GITHUB_TOKEN"
+      - "TEST_SITE_DB_HOST"
+  
+  staging:
+    requirements:
+      - "Mirror production environment"
+      - "Test data set"
+      - "Multiple WordPress versions"
+  
+  production:
+    requirements:
+      - "WordPress.org plugin repository"
+      - "GitHub releases"
+      - "Documentation site"
+
 # Versioning Workflow
 versioning_workflow:
   scheme: "semantic"
