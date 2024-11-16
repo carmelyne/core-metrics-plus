@@ -1,6 +1,6 @@
 {
     "name": "Core Metrics Plus",
-    "version": "1.0",
+    "version": "1.0.0",
     "download_url": "https://github.com/carmelyne/core-metrics-plus/archive/main.zip",
     "homepage": "https://github.com/carmelyne/core-metrics-plus",
     "requires": "5.0",
