@@ -10,5 +10,10 @@
     "scripts": {
         "test": "phpunit",
         "phpcs": "phpcs --standard=WordPress ./includes/"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
