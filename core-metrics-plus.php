@@ -10,76 +10,10 @@ Plugin URI: https://github.com/carmelyne/core-metrics-plus
 if (file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php')) {
     require_once dirname(__FILE__) . '/plugin-update-checker/plugin-update-checker.php';
     $myUpdateChecker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-        'https://github.com/carmelyne/core-metrics-plus',
+        'https://raw.githubusercontent.com/carmelyne/core-metrics-plus/main/plugin.json',
         __FILE__,
         'core-metrics-plus'
     );
-
-    // Set the branch that contains the stable release.
-    $myUpdateChecker->setBranch('main');
-    
-    // Enable release assets
-    $myUpdateChecker->getVcsApi()->enableReleaseAssets();
-    
-    // Enable debug mode with verbose logging
-    $myUpdateChecker->debugMode = true;
-
-    // Force an update check on every page load (temporary, for debugging)
-    add_action('init', function() use ($myUpdateChecker) {
-        delete_site_transient('update_plugins');
-        delete_site_transient('puc_check_count_core-metrics-plus');
-        wp_clean_plugins_cache(true);
-        $myUpdateChecker->checkForUpdates();
-    });
-
-    // Add debugging action
-    add_action('admin_notices', function() use ($myUpdateChecker) {
-        if (current_user_can('manage_options')) {
-            $info = $myUpdateChecker->getUpdateInfo();
-            $api = $myUpdateChecker->getVcsApi();
-            $currentVersion = get_plugin_data(__FILE__)['Version'];
-            
-            echo '<div class="notice notice-info">';
-            echo '<p><strong>Core Metrics Plus Debug Info:</strong></p>';
-            echo '<pre>';
-            echo "Current Version: " . $currentVersion . "\n";
-            echo "Update Checker Class: " . get_class($myUpdateChecker) . "\n";
-            echo "Update Checker URL: " . $myUpdateChecker->getMetadataUrl() . "\n";
-            echo "Branch: " . $myUpdateChecker->getBranch() . "\n";
-            
-            // Get latest release info
-            $latestRelease = $api->getLatestRelease();
-            echo "Latest GitHub Release: " . print_r($latestRelease, true) . "\n";
-            
-            // Get update info
-            echo "Update Info: " . print_r($info, true) . "\n";
-            
-            // Check transients
-            $updateTransient = get_site_transient('update_plugins');
-            echo "Update Plugins Transient: " . print_r($updateTransient, true) . "\n";
-            
-            // Last check time
-            $lastCheck = get_site_transient('puc_last_check_core-metrics-plus');
-            echo "Last Check Time: " . ($lastCheck ? date('Y-m-d H:i:s', $lastCheck) : 'Never') . "\n";
-            
-            echo '</pre>';
-            echo '</div>';
-        }
-    });
-
-    // Add a manual check button in the plugins page
-    add_filter('plugin_action_links_' . plugin_basename(__FILE__), function($links) use ($myUpdateChecker) {
-        $checkLink = sprintf(
-            '<a href="%s">%s</a>',
-            wp_nonce_url(add_query_arg(array(
-                'puc_check_for_updates' => 1,
-                'puc_slug' => 'core-metrics-plus',
-            )), 'puc_check_for_updates'),
-            'Check for updates'
-        );
-        array_unshift($links, $checkLink);
-        return $links;
-    });
 }
 
 function add_fetch_priority() {
