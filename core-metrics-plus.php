@@ -15,8 +15,12 @@ if (file_exists(dirname(__FILE__) . '/plugin-update-checker/plugin-update-checke
         'core-metrics-plus'
     );
     
-    // Set the branch that contains the stable release
     $myUpdateChecker->setBranch('main');
+    $myUpdateChecker->getVcsApi()->enableReleaseAssets();
+    
+    // Enable WordPress to download from GitHub releases
+    // Add your GitHub token here if your repository is private
+    // $myUpdateChecker->setAuthentication('your-github-token');
 }
 
 function add_fetch_priority() {
