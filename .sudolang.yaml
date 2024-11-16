@@ -1,6 +1,42 @@
-# Core Metrics Plus Development Workflow
+# Core Metrics Plus - AI Development Configuration
+# 
+# SUDOLANG VERSION: 1.0.0
+# PURPOSE: AI-assisted development configuration
+# DOCS: https://github.com/paralleldrive/sudolang-llm-support/blob/main/sudolang.sudo.md
+#
+# This file follows the Sudolang specification for LLM support.
+# Sudolang helps Large Language Models (LLMs) understand:
+# 1. Project structure and conventions
+# 2. Development workflows and standards
+# 3. Testing and quality requirements
+# 4. Documentation requirements
+#
+# AI CAPABILITIES REQUIRED:
+# - Code generation
+# - Documentation writing
+# - Testing suggestions
+# - Performance optimization
+# - WordPress best practices
 
-# Version Control
+metadata:
+  version: "1.0.0"
+  plugin_name: "Core Metrics Plus"
+  description: "WordPress performance optimization plugin"
+  repository: "https://github.com/carmelyne/core-metrics-plus"
+  ai_compatibility:
+    - "Codeium"
+    - "GitHub Copilot"
+    - "ChatGPT"
+  primary_goals:
+    - "Optimize WordPress Core Web Vitals"
+    - "Improve page load performance"
+    - "Maintain theme compatibility"
+  context_requirements:
+    - "WordPress plugin development experience"
+    - "Performance optimization knowledge"
+    - "PHP 8.0+ compatibility"
+
+# Development Workflow Configuration
 version_control:
   branch_naming:
     feature: "feat/*"
@@ -10,7 +46,7 @@ version_control:
     ci: "ci/*"
 
   commit_messages:
-    # Using Conventional Commits
+    # Using Conventional Commits - https://www.conventionalcommits.org/
     feat: "New features"
     fix: "Bug fixes"
     docs: "Documentation changes"
@@ -93,3 +129,23 @@ function_check_required_files:
     - "docs/AI_ASSIST.md"
     - "core-metrics-plus.php"
     - "docs/CHANGELOG.md"
+
+# AI Development Notes
+ai_notes:
+  performance_optimization:
+    critical_css:
+      approach: "Exclude admin styles only"
+      reason: "More reliable than complex critical path analysis"
+    
+    script_loading:
+      approach: "Conservative async loading"
+      reason: "Preserve core WordPress functionality"
+
+  code_generation:
+    style: "WordPress coding standards"
+    patterns: "Use singleton for optimization classes"
+    
+  testing_focus:
+    - "Cross-theme compatibility"
+    - "Core Web Vitals impact"
+    - "WordPress version compatibility"
