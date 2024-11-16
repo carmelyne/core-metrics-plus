@@ -229,3 +229,93 @@ ai_notes:
     - "Cross-theme compatibility"
     - "Core Web Vitals impact"
     - "WordPress version compatibility"
+
+# Versioning Workflow
+versioning_workflow:
+  scheme: "semantic"
+  format: "MAJOR.MINOR.PATCH"
+  current_version: "1.1.7"
+  files_to_update:
+    - "core-metrics-plus.php"
+    - "readme.txt"
+    - "package.json"
+    - "composer.json"
+  
+  increment_rules:
+    major:
+      - "Breaking changes to public API"
+      - "Removal of deprecated features"
+      - "Major WordPress version compatibility changes"
+    minor:
+      - "New features (feat:)"
+      - "Non-breaking enhancements"
+      - "New optimization capabilities"
+    patch:
+      - "Bug fixes (fix:)"
+      - "Performance improvements"
+      - "Documentation updates"
+  
+  changelog_management:
+    location: "CHANGELOG.md"
+    sections:
+      - "Added"
+      - "Changed"
+      - "Deprecated"
+      - "Removed"
+      - "Fixed"
+      - "Security"
+    commit_to_section_mapping:
+      "feat": "Added"
+      "fix": "Fixed"
+      "docs": "Changed"
+      "perf": "Changed"
+      "security": "Security"
+      "breaking": "Changed"
+  
+  release_process:
+    pre_release:
+      - "Update version numbers in all files"
+      - "Update changelog"
+      - "Run full test suite"
+      - "Update readme.txt stable tag"
+      - "Create GitHub release draft"
+    
+    wordpress_org:
+      svn_repository: "https://plugins.svn.wordpress.org/core-metrics-plus"
+      assets:
+        - "assets/banner-772x250.png"
+        - "assets/icon-256x256.png"
+      required_files:
+        - "readme.txt"
+        - "core-metrics-plus.php"
+        - "includes/*"
+        - "assets/*"
+    
+    post_release:
+      - "Tag release on GitHub"
+      - "Update WordPress.org repository"
+      - "Close related GitHub issues"
+      - "Update documentation with new version"
+  
+  hotfix_workflow:
+    branch_naming: "hotfix/${version}"
+    requirements:
+      - "Critical bug fixes only"
+      - "Minimal changes"
+      - "Full test coverage"
+    process:
+      - "Branch from main/master"
+      - "Fix critical issue"
+      - "Update patch version"
+      - "Merge to main and develop"
+  
+  version_compatibility:
+    wordpress:
+      minimum: "6.0"
+      tested_up_to: "6.4"
+      requires_php: "8.0"
+    check_compatibility:
+      - "PHP versions"
+      - "WordPress core"
+      - "Popular themes"
+      - "Common plugins"
