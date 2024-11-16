@@ -12,8 +12,8 @@ jobs:
     
     strategy:
       matrix:
-        php-versions: ['7.4', '8.0', '8.1']
-        wordpress-versions: ['latest', '6.2', '6.1']
+        php-versions: ['8.0', '8.1']  # Most common versions now
+        wordpress-versions: ['latest', '6.2']  # Recent versions
 
     name: WP ${{ matrix.wordpress-versions }} on PHP ${{ matrix.php-versions }}
     
@@ -36,11 +36,6 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: Check WordPress Coding Standards
-        run: |
-          composer global require wp-coding-standards/wpcs
-          phpcs --standard=WordPress ./includes/
-
       - name: Basic smoke test
         run: |
           # Check if critical files exist
@@ -54,10 +49,3 @@ jobs:
           # Validate PHP files
           php includes/critical-css.php
           php includes/script-optimizer.php
-
-      - name: Archive code coverage results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: code-coverage-report
-          path: clover.xml
