@@ -99,23 +99,52 @@ development_workflow:
       - "Push to remote: git push origin ${branch}"
 
   review_workflow:
-    requirements:
-      - "Code follows WordPress standards"
-      - "Documentation is updated"
-      - "Tests are passing"
-      - "Performance is not degraded"
-      - "User story is satisfied"
+    steps:
+      - "Code review by team members"
+      - "Performance impact assessment"
+      - "Documentation review"
+      - "Test coverage verification"
 
   release_workflow:
-    versioning:
-      major: "Breaking changes"
-      minor: "New features"
-      patch: "Bug fixes"
     steps:
-      - "Update version numbers"
-      - "Update changelog"
-      - "Create release tag"
-      - "Deploy to WordPress.org"
+      1_version_bump:
+        description: "Update version numbers"
+        files:
+          - "core-metrics-plus.php"
+          - "docs/CHANGELOG.md"
+        command: "git checkout -b release/v${version}"
+
+      2_changelog_update:
+        description: "Update CHANGELOG.md"
+        format: |
+          ## [${version}] - ${date}
+          ### Added
+          - ${new_features}
+          ### Changed
+          - ${changes}
+          ### Fixed
+          - ${fixes}
+
+      3_create_tag:
+        description: "Create and push Git tag"
+        commands:
+          - "git tag -a v${version} -m 'Release version ${version}'"
+          - "git push origin v${version}"
+
+      4_create_release:
+        description: "Create GitHub release"
+        command: "gh release create v${version} --title '${title}' --notes '${notes}'"
+        requirements:
+          - "Version tag exists"
+          - "Changelog updated"
+          - "All tests passing"
+
+      5_merge_strategy:
+        description: "Merge release branch"
+        steps:
+          - "Merge to main: git checkout main && git merge release/v${version}"
+          - "Push to main: git push origin main"
+          - "Delete release branch: git branch -d release/v${version}"
 
 # Code Quality Standards
 code_quality:
